@@ -4,8 +4,6 @@ import openpyxl
 
 df = pd.read_excel('Tech Stream Dataset_Amended.xlsx')
 
-ndf = df.dropna()
+df['Volume'] = df['Volume'].abs()
 
-ndf['Volume'] = ndf['Volume'].abs()
-
-print(ndf.to_string)
+print(df.to_string)
