@@ -1,0 +1,11 @@
+import pandas as pd
+
+df = pd.read_excel('Tech Stream Dataset_Amended.xlsx')
+
+#new_df = df.dropna()
+
+#print(new_df.to_string())
+
+df['Volume'] = df['Volume'].abs()
+
+df = df.drop_duplicates()
