@@ -1,11 +1,11 @@
 import pandas as pd
+import numpy as np
+import openpyxl
 
 df = pd.read_excel('Tech Stream Dataset_Amended.xlsx')
 
-#new_df = df.dropna()
+ndf = df.dropna()
 
-#print(new_df.to_string())
+ndf['Volume'] = ndf['Volume'].abs()
 
-df['Volume'] = df['Volume'].abs()
-
-df = df.drop_duplicates()
+print(ndf.to_string)
