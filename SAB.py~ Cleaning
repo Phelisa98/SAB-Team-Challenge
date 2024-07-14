@@ -5,6 +5,7 @@ df = pd.read_excel('Tech Stream Dataset_Amended.xlsx')
 
 print(df.duplicated())
 
-df['Volume'] = df['Volume'].abs()
+df_cleaned = df[df['volume'] >= 0]
+print("\nData After Dropping Negative Values")
+print(df_cleaned)
 
-print(df.to_string)
