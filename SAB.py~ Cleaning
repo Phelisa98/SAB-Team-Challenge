@@ -3,9 +3,6 @@ import openpyxl
 
 df = pd.read_excel('Tech Stream Dataset_Amended.xlsx')
 
-print(df.duplicated())
-
 df_cleaned = df[df['volume'] >= 0]
-print("\nData After Dropping Negative Values")
 print(df_cleaned)
 
