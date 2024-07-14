@@ -7,7 +7,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 
 df = pd.read_excel('Tech Stream Dataset_Amended_Cleaned.xlsx')
 
-#Assumption_that_negativea_volume_
+#Assumption_that_negativea_volume_or_=_0_are_erroneous
 
 #Task_1
 
