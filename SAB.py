@@ -8,7 +8,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 df = pd.read_excel('SABCleaned_data.xlsx')
 
 # Check for and handle negative Volume values if they are erroneous
-df = df[df['Volume (HL)'] >= 0]
+df = df[df['Volume (hL)'] >= 0]
 
 # Data inspection
 print(df.shape)
@@ -21,47 +21,51 @@ df['Month'] = df['Date'].dt.month
 df['Year'] = df['Date'].dt.year
 
 # Group data for seasonal trends
-monthly_sales = df.groupby(['Year', 'Month', 'Manufacturer'])['Volume (HL)'].sum().reset_index()
+monthly_sales = df.groupby(['Year', 'Month', 'Manufacturer'])['Volume (hL)'].sum().reset_index()
+print(monthly_sales)
 
-# Plot seasonal sales trends by manufacturer
-plt.figure(figsize=(14, 8), dpi=500, facecolor='w', edgecolor='k')
-sns.lineplot(data=monthly_sales, x='Month', y='Volume (HL)', hue='Manufacturer')
-plt.title('Seasonal Sales Trends by Manufacturer')
-plt.xlabel('Month')
-plt.ylabel('Sales Volume (HL)')
-plt.legend()
-plt.show()
-
-# Group data by price tier and month
-monthly_sales_price_tier = df.groupby(['Price Tier', 'Month', 'Manufacturer'])['Volume (HL)'].sum().reset_index()
-
-# Plot seasonal sales trends by price tier
+#Plot seasonal sales trends by manufacturer
 plt.figure(figsize=(14, 8))
-for price_tier in monthly_sales_price_tier['Price Tier'].unique():
-    price_tier_sales = monthly_sales_price_tier[monthly_sales_price_tier['Price Tier'] == price_tier]
-    plt.plot(price_tier_sales['Month'], price_tier_sales['Volume (HL)'], label=price_tier)
-
-plt.title('Seasonal Sales Trends by Price Tier')
+sns.lineplot(data=monthly_sales,x='Month', y='Volume (hL)', hue='Manufacturer')
+plt.title('Seasonal Sales Trends by Year')  
 plt.xlabel('Month')
-plt.ylabel('Sales Volume (HL)')
-plt.legend()
+plt.ylabel('Volume (HL)')
 plt.show()
 
-# Analyze impact of factors
-factors = df.groupby(['Month', 'Manufacturer', 'Pack Size'])['Volume (HL)'].sum().reset_index()
+#Group data for further pack type and pack size impact analysis
+pack_sales = df.groupby(['Pack Type', 'Pack Size'])['Volume (hL)'].sum().reset_index()
+print(pack_sales)
+
+#Plot impact of Pack Type on Sales Volume
+plt.figure(figsize=(14,8))
+sns.barplot(data=pack_sales,x='Pack Type',y='Volume (hL)',ci=None)
+plt.title('Impact of Pack Type on Sales Volume')
+plt.xlabel('Pack Type')
+plt.ylabel('Volume (hL)')
+plt.show()
+
+#Plot impact of Pack Size on Sales Volume
+plt.figure(figsize=(14,8))
+sns.barplot(data=pack_sales, x='Pack Size',y='Volume (hL)',ci=None)
+plt.title('Impact of Pack Size on Sales Volume')
+plt.xlabel('Pack Size')
+plt.ylabel('Volume (hL)')
+plt.show()
 
 # Visualize impact of different factors using pair plots
-sns.pairplot(factors, hue='Manufacturer', palette='Set1')
+sns.pairplot(pack_sales, palette='Set1')
 plt.show()
 
-factors = df.groupby(['Pack Type', 'Pack Size'])['Volume (HL)'].sum().reset_index()
+#Correlation matrix to see the relationships between factors.
+# First, we need to encode categorical variables to numeric format for correlation analysis
+pack_sales_encoded = pd.get_dummies(pack_sales, columns=['Pack Type', 'Pack Size'])
 
-# Visualize impact of different factors using pair plots
-sns.pairplot(factors, palette='Set1')
-plt.show()
+#Add volume column back for correlation analysis
+pack_sales_encoded['Volume (HL)'] = pack_sales['Volume (hL)']
 
 # Correlation matrix to see the relationships between factors
 plt.figure(figsize=(14, 8))
-sns.heatmap(factors.corr(), annot=True, cmap='coolwarm')
+corr_matrix = pack_sales_encoded.corr()
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm',fmt='.2f', linewidths=0.5)
 plt.title('Correlation Matrix of Factors Affecting Sales Volume')
 plt.show()
